@@ -76,7 +76,7 @@ def assistant_handler(client, assistant_id):
     with st.sidebar:
         assistant_name = st.text_input("Name", value = assistant.name)
         assistant_instructions = st.text_area("Instructions", value=assistant.instructions)
-        model_option = st.sidebar.radio("Model", ('gpt-4-turbo-preview'))
+        model_option = st.sidebar.radio("Model", ('gpt-4-turbo-preview',))
         st.subheader("Files")
         grid = st.columns(2)
         print(assistant.file_ids)
@@ -106,7 +106,7 @@ def create_assistant(client):
     assistants_dict = {"Create Assistant": "create-assistant"}
     assistant_name = st.text_input("Name")
     assistant_instructions = st.text_area("Instructions")
-    model_option = st.radio("Model", ('gpt-4-turbo-preview'))
+    model_option = st.radio("Model", ('gpt-4-turbo-preview',))
     def create_new_assistant():
         new_assistant = client.beta.assistants.create(
             name=assistant_name,
