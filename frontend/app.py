@@ -176,7 +176,7 @@ def chat_prompt(client, assistant_option):
         while st.session_state.run.status != "completed":
             if not pending:
                 with st.chat_message("assistant"):
-                    st.markdown("Assistant is thinking...")
+                    st.markdown("Claire is thinking...")
                 pending = True
             time.sleep(3)
             st.session_state.run = client.beta.threads.runs.retrieve(
