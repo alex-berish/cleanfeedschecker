@@ -1,15 +1,9 @@
-import io
+import streamlit as st
 import openai
 from openai import OpenAI
-
-import streamlit as st
-import pandas as pd
 import os
 import time
 import tempfile
-import requests
-import csv
-import json
 from PIL import Image
 
 def init():
@@ -21,14 +15,6 @@ def init():
 
     if "thread_id" not in st.session_state:
         st.session_state.thread_id = None
-
-def set_apikey():
-    st.sidebar.header('Claire GPT 2.0')
-    st.sidebar.markdown('Generate Cover Letters')
-    st.sidebar.header('Configure')
-    api_key = st.sidebar.text_input("Enter OpenAI API key (ask Alex)", type="password")
-
-    return api_key
 
 def config(client):
     my_assistants = client.beta.assistants.list(
@@ -53,7 +39,6 @@ def chat_prompt(client, assistant_option):
             content=prompt,
         ))
 
-        # Including both "code_interpreter" and "retrieval" tools
         st.session_state.run = client.beta.threads.runs.create(
             thread_id=st.session_state.thread_id,
             assistant_id=assistant_option,
@@ -77,7 +62,6 @@ def chat_prompt(client, assistant_option):
             st.empty()
             chat_display(client)
 
-
 def chat_display(client):
     st.session_state.messages = client.beta.threads.messages.list(
         thread_id=st.session_state.thread_id
@@ -93,11 +77,9 @@ def chat_display(client):
                         image_file = content.image_file.file_id
                         image_data = client.files.content(image_file)
                         image_data = image_data.read()
-                        #save image to temp file
                         temp_file = tempfile.NamedTemporaryFile(delete=False)
                         temp_file.write(image_data)
                         temp_file.close()
-                        #display image
                         image = Image.open(temp_file.name)
                         st.image(image)
                     else:
@@ -107,7 +89,10 @@ def main():
     st.title('ClaireGPT 2.0 📈')
     st.caption('For all your cover letter needs...')
     st.divider()
-    api_key = set_apikey()
+
+    # Fetch API key from st.secrets
+    api_key = st.secrets["openai_api_key"]
+
     if api_key:
         client = OpenAI(api_key=api_key)
         assistant_option = config(client)
@@ -117,8 +102,8 @@ def main():
                 print(st.session_state.thread_id)
             chat_prompt(client, assistant_option)
     else:
-        st.warning("Please enter your OpenAI API key")
+        st.error("OpenAI API key not found in secrets. Please set it as a secret.")
 
 if __name__ == '__main__':
     init()
-    main() 
+    main()
