@@ -91,6 +91,7 @@ def main():
     st.title('ClaireGPT 2.0 📈')
     st.caption('For all your cover letter needs...')
     st.divider()
+    st.sidebar.title('ClaireGPT 2.0')
 
     # Fetch API key from st.secrets
     api_key = st.secrets["openai_api_key"]
