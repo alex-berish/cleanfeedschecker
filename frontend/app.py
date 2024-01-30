@@ -44,23 +44,28 @@ def chat_prompt(client, assistant_option):
             assistant_id=assistant_option,
             tools=[{"type": "code_interpreter"}, {"type": "retrieval"}],
         )
-        
+
         print(st.session_state.run)
-        pending = False
+        pending = False  # Reset pending to False for each new run
         while st.session_state.run.status != "completed":
             if not pending:
-                with st.chat_message("assistant"):
-                    st.markdown("Claire is thinking...")
+                # Custom HTML for styling the message
+                st.markdown("""
+                    <div style="background-color:#FFFF00; color:black; padding:10px; border-radius:5px;">
+                        Claire is thinking...
+                    </div>
+                    """, unsafe_allow_html=True)
                 pending = True
             time.sleep(3)
             st.session_state.run = client.beta.threads.runs.retrieve(
                 thread_id=st.session_state.thread_id,
                 run_id=st.session_state.run.id,
             )
-            
-        if st.session_state.run.status == "completed": 
+
+        if st.session_state.run.status == "completed":
             st.empty()
             chat_display(client)
+
 
 def chat_display(client):
     st.session_state.messages = client.beta.threads.messages.list(
