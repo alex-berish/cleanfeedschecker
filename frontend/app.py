@@ -33,11 +33,11 @@ def chat_prompt(client, assistant_option):
     if prompt := st.chat_input("Enter a job description here"):
         with st.chat_message("user"):
             st.markdown(prompt)
-        st.session_state.messages = st.session_state.messages.append(client.beta.threads.messages.create(
+        client.beta.threads.messages.create(
             thread_id=st.session_state.thread_id,
             role="user",
             content=prompt,
-        ))
+        )
 
         st.session_state.run = client.beta.threads.runs.create(
             thread_id=st.session_state.thread_id,
@@ -61,6 +61,7 @@ def chat_prompt(client, assistant_option):
         if st.session_state.run.status == "completed": 
             st.empty()
             chat_display(client)
+
 
 
 
