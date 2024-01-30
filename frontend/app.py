@@ -33,19 +33,20 @@ def chat_prompt(client, assistant_option):
     if prompt := st.chat_input("Enter a job description here"):
         with st.chat_message("user"):
             st.markdown(prompt)
+        # Send the user's message
         client.beta.threads.messages.create(
             thread_id=st.session_state.thread_id,
             role="user",
             content=prompt,
         )
 
+        # Start a run to process the message
         st.session_state.run = client.beta.threads.runs.create(
             thread_id=st.session_state.thread_id,
             assistant_id=assistant_option,
             tools=[{"type": "code_interpreter"}, {"type": "retrieval"}],
         )
         
-        print(st.session_state.run)
         pending = False
         while st.session_state.run.status != "completed":
             if not pending:
@@ -57,19 +58,21 @@ def chat_prompt(client, assistant_option):
                 thread_id=st.session_state.thread_id,
                 run_id=st.session_state.run.id,
             )
-            
+
+        # Display the chat after getting a response
         if st.session_state.run.status == "completed": 
-            st.empty()
             chat_display(client)
 
 
 
 
 def chat_display(client):
+    # Get the latest messages for the thread
     st.session_state.messages = client.beta.threads.messages.list(
         thread_id=st.session_state.thread_id
     ).data
 
+    # Display messages
     for message in reversed(st.session_state.messages):
         if message.role in ["user", "assistant"]:
             with st.chat_message(message.role):
