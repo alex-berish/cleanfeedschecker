@@ -33,7 +33,7 @@ def chat_prompt(client, assistant_option):
     if prompt := st.chat_input("Enter a job description here"):
         with st.chat_message("user"):
             st.markdown(prompt)
-        st.session_state.messages = st.session_state.messages.append(client.beta.threads.messages.create(
+        st.session_state.messages.append(client.beta.threads.messages.create(
             thread_id=st.session_state.thread_id,
             role="user",
             content=prompt,
@@ -45,16 +45,14 @@ def chat_prompt(client, assistant_option):
             tools=[{"type": "code_interpreter"}, {"type": "retrieval"}],
         )
 
-        print(st.session_state.run)
         pending = False  # Reset pending to False for each new run
         while st.session_state.run.status != "completed":
             if not pending:
-                # Custom HTML for styling the message
-                st.markdown("""
-                    <div style="background-color:#FFFF00; color:black; padding:10px; border-radius:5px;">
-                        Claire is thinking...
-                    </div>
-                    """, unsafe_allow_html=True)
+                # Add thinking message to the chat
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": {"value": "Claire is thinking..."} }]
+                })
                 pending = True
             time.sleep(3)
             st.session_state.run = client.beta.threads.runs.retrieve(
@@ -63,8 +61,8 @@ def chat_prompt(client, assistant_option):
             )
 
         if st.session_state.run.status == "completed":
-            st.empty()
-            chat_display(client)
+            chat_display(client)  # Call chat_display to update the chat with the response
+
 
 
 def chat_display(client):
