@@ -33,7 +33,7 @@ def chat_prompt(client, assistant_option):
     if prompt := st.chat_input("Enter a job description here"):
         with st.chat_message("user"):
             st.markdown(prompt)
-        st.session_state.messages.append(client.beta.threads.messages.create(
+        st.session_state.messages = st.session_state.messages.append(client.beta.threads.messages.create(
             thread_id=st.session_state.thread_id,
             role="user",
             content=prompt,
@@ -44,24 +44,23 @@ def chat_prompt(client, assistant_option):
             assistant_id=assistant_option,
             tools=[{"type": "code_interpreter"}, {"type": "retrieval"}],
         )
-
-        pending = False  # Reset pending to False for each new run
+        
+        print(st.session_state.run)
+        pending = False
         while st.session_state.run.status != "completed":
             if not pending:
-                # Add thinking message to the chat
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": [{"type": "text", "text": {"value": "Claire is thinking..."} }]
-                })
+                with st.chat_message("assistant"):
+                    st.markdown("Claire is thinking...")
                 pending = True
             time.sleep(3)
             st.session_state.run = client.beta.threads.runs.retrieve(
                 thread_id=st.session_state.thread_id,
                 run_id=st.session_state.run.id,
             )
-
-        if st.session_state.run.status == "completed":
-            chat_display(client)  # Call chat_display to update the chat with the response
+            
+        if st.session_state.run.status == "completed": 
+            st.empty()
+            chat_display(client)
 
 
 
