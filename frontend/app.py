@@ -26,10 +26,10 @@ def init():
         st.session_state.thread_id = None
 
 def set_apikey():
-    st.sidebar.header('Tutorial on How to Build This')
-    st.sidebar.markdown('For a detailed guide and demonstration, check out the [Assistants API Tutorial](https://www.youtube.com/watch?v=ZjpNx8qNnaA) on YouTube.')
+    st.sidebar.header('Claire GPT 2.0')
+    st.sidebar.markdown('Generate Cover Letters')
     st.sidebar.header('Configure')
-    api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
+    api_key = st.sidebar.text_input("Enter OpenAI API key (ask Alex)", type="password")
 
     return api_key
     
@@ -76,7 +76,7 @@ def assistant_handler(client, assistant_id):
     with st.sidebar:
         assistant_name = st.text_input("Name", value = assistant.name)
         assistant_instructions = st.text_area("Instructions", value=assistant.instructions)
-        model_option = st.sidebar.radio("Model", ('gpt-4', 'gpt-3.5-turbo', 'gpt-3.5-turbo-1106', 'gpt-4-1106-preview'))
+        model_option = st.sidebar.radio("Model", ('gpt-4-turbo-preview'))
         st.subheader("Files")
         grid = st.columns(2)
         print(assistant.file_ids)
@@ -106,7 +106,7 @@ def create_assistant(client):
     assistants_dict = {"Create Assistant": "create-assistant"}
     assistant_name = st.text_input("Name")
     assistant_instructions = st.text_area("Instructions")
-    model_option = st.radio("Model", ('gpt-4', 'gpt-3.5-turbo', 'gpt-3.5-turbo-1106', 'gpt-4-1106-preview'))
+    model_option = st.radio("Model", ('gpt-4-turbo-preview'))
     def create_new_assistant():
         new_assistant = client.beta.assistants.create(
             name=assistant_name,
@@ -145,7 +145,7 @@ def create_assistant(client):
         st.warning("Assistant name does exist in assistants_dict. Please choose another name.")
              
 def chat_prompt(client, assistant_option):
-    if prompt := st.chat_input("Enter your message here"):
+    if prompt := st.chat_input("Enter a job description here"):
         with st.chat_message("user"):
             st.markdown(prompt)
         st.session_state.messages = st.session_state.messages.append(client.beta.threads.messages.create(
@@ -176,7 +176,7 @@ def chat_prompt(client, assistant_option):
         while st.session_state.run.status != "completed":
             if not pending:
                 with st.chat_message("assistant"):
-                    st.markdown("AnalAssist is thinking...")
+                    st.markdown("Assistant is thinking...")
                 pending = True
             time.sleep(3)
             st.session_state.run = client.beta.threads.runs.retrieve(
@@ -233,9 +233,8 @@ def chat_display(client):
     #             st.markdown(message[1])
 
 def main():
-    st.title('AI Data Assistant 📈')
-    st.caption('Data analysis assistant using OpenAI Assistants API')
-    st.markdown('🎥 For a detailed guide and demonstration, check out the [Assistants API Tutorial](https://www.youtube.com/watch?v=ZjpNx8qNnaA) on YouTube.')
+    st.title('ClaireGPT 2.0 📈')
+    st.caption('For all your cover letter needs...')
     st.divider()
     api_key = set_apikey()
     if api_key:
