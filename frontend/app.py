@@ -90,7 +90,7 @@ def chat_display(client):
                                     # Here we assume a general file name and extension, you might want to adjust this
                                     # based on actual file type or information if available
                                     file_name = "downloaded_file"  # Placeholder file name
-                                    file_ext = ".txt"  # Default file extension, adjust as needed
+                                    file_ext = ".csv"  # Default file extension, adjust as needed
                                     
                                     st.download_button(label="Download File",
                                                        data=file_data_bytes,
