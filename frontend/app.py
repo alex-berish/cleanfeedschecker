@@ -79,6 +79,24 @@ def chat_display(client):
                 for content in message.content:
                     if content.type == "text":
                         st.markdown(content.text.value)
+                        # Check annotations for file paths and handle file downloads
+                        if "annotations" in content.text:
+                            for annotation in content.text["annotations"]:
+                                if annotation["type"] == "file_path":
+                                    file_id = annotation["file_path"]["file_id"]
+                                    file_data = client.files.content(file_id)  # Fetch file content using file ID
+                                    file_data_bytes = file_data.read()
+                                    
+                                    # Here we assume a general file name and extension, you might want to adjust this
+                                    # based on actual file type or information if available
+                                    file_name = "downloaded_file"  # Placeholder file name
+                                    file_ext = ".txt"  # Default file extension, adjust as needed
+                                    
+                                    st.download_button(label="Download File",
+                                                       data=file_data_bytes,
+                                                       file_name=file_name + file_ext,
+                                                       mime="application/octet-stream")
+                    
                     elif content.type == "image_file":
                         image_file = content.image_file.file_id
                         image_data = client.files.content(image_file)
