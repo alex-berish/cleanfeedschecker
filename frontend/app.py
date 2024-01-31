@@ -124,7 +124,7 @@ def main():
                 print(st.session_state.thread_id)
             
             # File upload section
-            uploaded_file = st.file_uploader("Upload your file", type=["txt", "csv", "png", "jpg", "jpeg"])
+            uploaded_file = st.file_uploader("Upload your file", type=["txt", "csv", "png", "jpg", "jpeg", "xlsx"])
             if uploaded_file is not None:
                 file_id = upload_file(client, uploaded_file)
                 st.success(f"File uploaded successfully with ID: {file_id}")
