@@ -85,7 +85,7 @@ def assistant_handler(client, assistant_id):
                 st.text(file_id)
             with grid[1]:
                 st.button("Delete", on_click = delete_file(file_id), key = file_id)
-        uploaded_file = st.file_uploader("Upload a file", type=["txt", "csv", "xlsx"])
+        uploaded_file = st.file_uploader("Upload a file", type=["txt", "csv",])
     
         if st.button("Update Assistant"):
             assistant = client.beta.assistants.update(
